@@ -21,22 +21,71 @@ const regExp= /^[a-zA-Z0-9._]+@gmail.com$/
 const parentBlock=document.querySelector('.parent_block');
 const childBlock=document.querySelector('.child_block');
 
-let position = 0;
-let direction = 1;
-const blockWidth=parentBlock.clientWidth-childBlock.clientWidth;
+let positionX = 0;
+let positionY = 0;
+const freeWidth=parentBlock.clientWidth-childBlock.clientWidth;
 const doAnimation = () => {
-    position += 5 * direction;
-    if (position >= blockWidth) {
-        direction = -1;
-    } else if (position <= 0) {
-        direction = 1;
+    if (positionX < freeWidth && positionY===0) {
+        positionX++
+        childBlock.style.left=`${positionX}px`
+        setTimeout(doAnimation, 5)
+    } else if(positionX>=freeWidth && positionY<freeWidth){
+        positionY++
+        childBlock.style.top=`${positionY}px`
+        setTimeout(doAnimation, 5)
+    } else if (positionX>0 && positionY===freeWidth){
+        positionX--
+        childBlock.style.left=`${positionX}px`
+        setTimeout(doAnimation, 5)
+    } else if (positionX===0 && positionY>0){
+        positionY--
+        childBlock.style.top=`${positionY}px`
+        setTimeout(doAnimation, 5)
     }
-    childBlock.style.left = position + 'px';
-    animation();
-};
-function animation() {
-    setTimeout(doAnimation, 50);
 }
 
-animation();
+doAnimation()
 
+//STOPWATCH BLOCK
+
+const minutes=document.getElementById('minutes')
+const seconds=document.getElementById('seconds')
+const startBtn=document.getElementById('start')
+const stopBtn=document.getElementById('stop')
+const resetBtn=document.getElementById('reset')
+
+let currentMinutes=0;
+let currentSeconds=0;
+let interval;
+
+const start=()=>{
+    currentSeconds++
+    seconds.innerHTML='0'+currentSeconds;
+    if (currentSeconds>9){
+        seconds.innerHTML=currentSeconds;
+    }
+    if (currentSeconds>59){
+        currentMinutes++;
+        minutes.innerHTML='0'+currentMinutes;
+        currentSeconds=0;
+        seconds.innerHTML='0'+currentSeconds;
+    }
+    if (currentMinutes>9){
+        minutes.innerHTML=currentMinutes;
+    }
+}
+
+startBtn.addEventListener('click',()=>{
+    clearInterval(interval)
+    interval=setInterval(start, 1000)
+})
+stopBtn.addEventListener('click', ()=>{
+    clearInterval(interval);
+})
+resetBtn.onclick=()=> {
+    clearInterval(interval);
+    currentSeconds=0
+    currentMinutes=0
+    seconds.innerHTML = '00'
+    minutes.innerHTML = '00'
+}
