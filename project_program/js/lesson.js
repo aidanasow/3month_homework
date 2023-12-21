@@ -58,5 +58,40 @@ tabsParent.onclick = (event)=>{
     }
 }
 
+//convertor
+const som=document.querySelector('#som')
+const usd=document.querySelector('#usd')
+const euro=document.querySelector('#eur')
+
+const convertor=(element, targetElement,targetElement2, current)=>{
+    element.oninput=()=>{
+        const xhr=new XMLHttpRequest()
+        xhr.open('GET','../data/converter.json')
+        xhr.setRequestHeader('Content-type', 'application/json')
+        xhr.send()
+        xhr.onload=()=>{
+            const data=JSON.parse(xhr.response)
+            switch (current) {
+                case 'som':
+                    targetElement.value=(element.value/data.usd).toFixed(2)
+                    targetElement2.value=(element.value/data.euro).toFixed(2)
+                    break
+                case 'usd':
+                    targetElement.value=(element.value*data.usd).toFixed(2)
+                    targetElement2.value=(targetElement.value/data.euro).toFixed(2)
+                    break
+                case 'euro':
+                    targetElement.value=(element.value/data.usd*data.euro).toFixed(2)
+                    targetElement2.value=(element.value*data.euro).toFixed(2)
+                    break
+                default:
+                    break
+            }
+        }
+    }
+}
+convertor(som, usd,euro, 'som')
+convertor(usd, som,euro, 'usd')
+convertor(euro, usd,som, 'euro')
 
 
